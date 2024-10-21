@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Colors for better visuals
 GREEN='\033[0;32m'
@@ -11,7 +11,6 @@ echo -e "${BLUE}Starting system configuration...${NC}"
 # Define package names
 packages=(
   bat
-  curl
   eza
   fd-find
   gcc
