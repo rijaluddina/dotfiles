@@ -4,6 +4,7 @@
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 BLUE='\033[0;34m'
+YELLOW='\033[0;33m'
 NC='\033[0m' # No Color
 
 echo -e "${BLUE}Starting system configuration...${NC}"
@@ -40,14 +41,18 @@ packages=(
 # Function to install packages
 install_packages() {
   echo -e "${BLUE}Updating package lists...${NC}"
-  sudo apt update
+  sudo apt update || {
+    echo -e "${RED}Failed to update package lists.${NC}"
+    exit 1
+  }
+
   echo -e "${BLUE}Installing required packages...${NC}"
   for package in "${packages[@]}"; do
-    if ! dpkg -l | grep -q "$package"; then
+    if ! command -v "$package" &>/dev/null; then
       echo -e "${GREEN}Installing $package...${NC}"
-      sudo apt install -y "$package"
+      sudo apt install -y "$package" || { echo -e "${RED}Failed to install $package.${NC}"; }
     else
-      echo -e "${RED}$package is already installed.${NC}"
+      echo -e "${YELLOW}$package is already installed.${NC}"
     fi
   done
 }
@@ -56,9 +61,9 @@ install_packages() {
 install_neovim() {
   if ! command -v nvim &>/dev/null; then
     echo -e "${GREEN}Installing Neovim...${NC}"
-    sudo snap install nvim --classic
+    sudo snap install nvim --classic || { echo -e "${RED}Failed to install Neovim.${NC}"; }
   else
-    echo -e "${RED}Neovim is already installed.${NC}"
+    echo -e "${YELLOW}Neovim is already installed.${NC}"
   fi
 }
 
@@ -72,11 +77,11 @@ configure_bat_fd() {
 
 # Install Zsh and Oh My Zsh
 install_zsh() {
-  if [ -z "$ZSH" ]; then
+  if ! command -v zsh &>/dev/null; then
     echo -e "${GREEN}Installing Zsh and Oh My Zsh...${NC}"
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" || { echo -e "${RED}Failed to install Oh My Zsh.${NC}"; }
   else
-    echo -e "${RED}Oh My Zsh is already installed.${NC}"
+    echo -e "${YELLOW}Oh My Zsh is already installed.${NC}"
   fi
 
   echo -e "${BLUE}Installing Zsh plugins...${NC}"
@@ -90,7 +95,11 @@ install_zsh() {
 # Install Tpm for Tmux
 install_tmux_tpm() {
   echo -e "${BLUE}Installing TPM for Tmux...${NC}"
-  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+  if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+  else
+    echo -e "${YELLOW}TPM is already installed.${NC}"
+  fi
 }
 
 # Install fzf & fzf-git
@@ -105,16 +114,20 @@ install_fzf() {
 install_nvm() {
   if ! command -v nvm &>/dev/null; then
     echo -e "${GREEN}Installing nvm...${NC}"
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash || { echo -e "${RED}Failed to install nvm.${NC}"; }
   else
-    echo -e "${RED}nvm is already installed.${NC}"
+    echo -e "${YELLOW}nvm is already installed.${NC}"
   fi
 }
 
 # Install WhiteSur-gtk-theme
 install_whitesur_theme() {
   echo -e "${BLUE}Installing WhiteSur-gtk-theme...${NC}"
-  git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git --depth=1 ~/.WhiteSur
+  if [ ! -d "$HOME/.WhiteSur" ]; then
+    git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git --depth=1 ~/.WhiteSur
+  else
+    echo -e "${YELLOW}WhiteSur theme is already installed.${NC}"
+  fi
 }
 
 # Install lazygit
@@ -124,9 +137,10 @@ install_lazygit() {
     LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
     curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
     tar xf lazygit.tar.gz lazygit
-    sudo install lazygit /usr/local/bin
+    sudo install lazygit /usr/local/bin || { echo -e "${RED}Failed to install lazygit.${NC}"; }
+    rm -f lazygit.tar.gz
   else
-    echo -e "${RED}lazygit is already installed.${NC}"
+    echo -e "${YELLOW}lazygit is already installed.${NC}"
   fi
 }
 
@@ -138,9 +152,9 @@ install_composer() {
     php -r "if (hash_file('sha384', 'composer-setup.php') === 'dac665fdc30fdd8ec78b38b9800061b4150413ff2e3b6f88543c636f7cd84f6db9189d43a81e5503cda447da73c7e5b6') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
     php composer-setup.php
     php -r "unlink('composer-setup.php');"
-    sudo mv composer.phar /usr/local/bin/composer
+    sudo mv composer.phar /usr/local/bin/composer || { echo -e "${RED}Failed to move Composer.${NC}"; }
   else
-    echo -e "${RED}Composer is already installed.${NC}"
+    echo -e "${YELLOW}Composer is already installed.${NC}"
   fi
 }
 
@@ -148,10 +162,31 @@ install_composer() {
 clone_dotfiles() {
   if [ ! -d "$HOME/.dotfiles" ]; then
     echo -e "${BLUE}Cloning your dotfiles...${NC}"
-    git clone https://github.com/rijaluddina/dotfiles.git ~/.dotfiles
+    git clone https://github.com/rijaluddina/dotfiles.git ~/.dotfiles || {
+      echo -e "${RED}Failed to clone dotfiles.${NC}"
+      exit 1
+    }
     cd ~/.dotfiles
+    # Copy nvim configuration
+    echo -e "${BLUE}Copying neovim configuration...${NC}"
+    cp -r ~/.dotfiles/config/nvim ~/.config/
+    # Copy lazygit configuration
+    echo -e "${BLUE}Copying lazygit configuration...${NC}"
+    cp -r ~/.dotfiles/config/lazygit ~/.config/
+    # Copy git configuration
+    echo -e "${BLUE}Copying git configuration...${NC}"
+    cp ~/.dotfiles/user/gitconfig ~/.gitconfig
+    # Copy tmux configuration
+    echo -e "${BLUE}Copying tmux configuration...${NC}"
+    cp ~/.dotfiles/user/tmux.conf ~/.tmux.conf
+    # Copy zsh configuration
+    echo -e "${BLUE}Copying zsh configuration...${NC}"
+    cp ~/.dotfiles/user/zshrc ~/.zshrc
+    # Set zsh as the default shell
+    echo -e "${BLUE}Setting zsh as the default shell...${NC}"
+    chsh -s $(which zsh) || { echo -e "${RED}Failed to set Zsh as default shell.${NC}"; }
   else
-    echo -e "${RED}Dotfiles are already cloned.${NC}"
+    echo -e "${YELLOW}Dotfiles are already cloned.${NC}"
   fi
 }
 
