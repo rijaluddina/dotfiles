@@ -162,7 +162,7 @@ install_composer() {
 clone_dotfiles() {
   if [ ! -d "$HOME/.dotfiles" ]; then
     echo -e "${BLUE}Cloning your dotfiles...${NC}"
-    git clone https://github.com/rijaluddina/dotfiles.git ~/.dotfiles || {
+    git clone --recursive https://github.com/rijaluddina/dotfiles.git ~/.dotfiles || {
       echo -e "${RED}Failed to clone dotfiles.${NC}"
       exit 1
     }
