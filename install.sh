@@ -49,7 +49,7 @@ check_sudo() {
 # Function to install packages
 install_packages() {
   echo -e "${BLUE}Updating package lists...${NC}"
-  sudo apt update || {
+  sudo apt update && sudo apt upgrade -y || {
     echo -e "${RED}Failed to update package lists.${NC}"
     exit 1
   }
