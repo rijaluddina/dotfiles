@@ -38,6 +38,14 @@ packages=(
   zoxide
 )
 
+# Function to check if sudo is available
+check_sudo() {
+  if ! sudo -v &>/dev/null; then
+    echo -e "${RED}Error: sudo privileges are required. Please run as a user with sudo access.${NC}"
+    exit 1
+  fi
+}
+
 # Function to install packages
 install_packages() {
   echo -e "${BLUE}Updating package lists...${NC}"
@@ -194,6 +202,7 @@ clone_dotfiles() {
 echo -e "${BLUE}Do you want to proceed with installing the necessary packages? (y/n)${NC}"
 read -r proceed
 if [[ "$proceed" == "y" ]]; then
+  check_sudo
   install_packages
   install_neovim
   configure_bat_fd
