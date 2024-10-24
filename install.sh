@@ -94,18 +94,39 @@ install_zsh() {
   if [ ! -d "$HOME/.oh-my-zsh" ]; then
     echo "${GREEN}Installing Oh My Zsh...${NC}"
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" || { echo "${RED}Failed to install Oh My Zsh.${NC}"; }
+    exit 1
   else
     echo "${YELLOW}Oh My Zsh is already installed.${NC}"
   fi
-  if [ ! -d "$HOME/.oh-my-zsh/custom/plugins" ]; then
+  if [ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" ] ||
+    [ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting" ] ||
+    [ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting" ] ||
+    [ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autocomplete" ]; then
     echo "${BLUE}Installing Zsh plugins...${NC}"
-    git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
-    git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git $ZSH_CUSTOM/plugins/fast-syntax-highlighting
-    git clone --depth 1 -- https://github.com/marlonrichert/zsh-autocomplete.git $ZSH_CUSTOM/plugins/zsh-autocomplete
+
+    # Cloning zsh-autosuggestions
+    if ! git clone https://github.com/zsh-users/zsh-autosuggestions.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"; then
+      echo "${RED}Failed to clone zsh-autosuggestions.${NC}"
+    fi
+
+    # Cloning zsh-syntax-highlighting
+    if ! git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"; then
+      echo "${RED}Failed to clone zsh-syntax-highlighting.${NC}"
+    fi
+
+    # Cloning fast-syntax-highlighting
+    if ! git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting"; then
+      echo "${RED}Failed to clone fast-syntax-highlighting.${NC}"
+    fi
+
+    # Cloning zsh-autocomplete
+    if ! git clone --depth 1 https://github.com/marlonrichert/zsh-autocomplete.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autocomplete"; then
+      echo "${RED}Failed to clone zsh-autocomplete.${NC}"
+    fi
   else
-    echo "${YELLOW}Zsh plugins is already installed.${NC}"
+    echo "${YELLOW}Zsh plugins are already installed.${NC}"
   fi
+
   if [ ! -d "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" ]; then
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
   else
@@ -209,35 +230,45 @@ configuration() {
   if [ -e ~/.config/nvim ] || [ -L ~/.config/nvim ]; then
     echo "${YELLOW}Neovim configuration already exists. Skipping...${NC}"
   else
-    ln -s ~/.dotfiles/config/nvim ~/.config/ && echo "${GREEN}Neovim configuration copied successfully.${NC}" || echo -e "${RED}Failed to copy Neovim configuration.${NC}"
+    ln -s ~/.dotfiles/config/nvim ~/.config/ && echo "${GREEN}Neovim configuration copied successfully.${NC}" || echo -e "${RED}Neovim configuration failed.${NC}"
   fi
 
   echo "${BLUE}Symlink lazygit configuration...${NC}"
   if [ -e ~/.config/lazygit ] || [ -L ~/.config/lazygit ]; then
     echo "${YELLOW}Lazygit configuration already exists. Skipping...${NC}"
   else
-    ln -s ~/.dotfiles/config/lazygit ~/.config/ && echo "${GREEN}Lazygit configuration copied successfully.${NC}" || echo -e "${RED}Failed to copy Lazygit configuration.${NC}"
+    ln -s ~/.dotfiles/config/lazygit ~/.config/ && echo "${GREEN}Lazygit configuration copied successfully.${NC}" || echo -e "${RED}Lazygit configuration failed.${NC}"
   fi
 
   echo "${BLUE}Symlink git configuration...${NC}"
   if [ -e ~/.gitconfig ] || [ -L ~/.gitconfig ]; then
     echo "${YELLOW}Git configuration already exists. Skipping...${NC}"
   else
-    ln -s ~/.dotfiles/user/gitconfig ~/.gitconfig && echo "${GREEN}Git configuration copied successfully.${NC}" || echo -e "${RED}Failed to copy Git configuration.${NC}"
+    ln -s ~/.dotfiles/user/gitconfig ~/.gitconfig && echo "${GREEN}Git configuration copied successfully.${NC}" || echo -e "${RED}Git configuration failed.${NC}"
   fi
 
   echo "${BLUE}Symlink tmux configuration...${NC}"
   if [ -e ~/.tmux.conf ] || [ -L ~/.tmux.conf ]; then
     echo "${YELLOW}Tmux configuration already exists. Skipping...${NC}"
   else
-    ln -s ~/.dotfiles/user/tmux.conf ~/.tmux.conf && echo "${GREEN}Tmux configuration copied successfully.${NC}" || echo -e "${RED}Failed to copy Tmux configuration.${NC}"
+    ln -s ~/.dotfiles/user/tmux.conf ~/.tmux.conf && echo "${GREEN}Tmux configuration copied successfully.${NC}" || echo -e "${RED}Tmux configuration failed.${NC}"
   fi
 
   echo "${BLUE}Symlink zsh configuration...${NC}"
-  if [ -e ~/.zshrc ] || [ -L ~/.zshrc ]; then
-    echo "${YELLOW}Zsh configuration already exists. Skipping...${NC}"
+  if [ ! -d "$HOME/.zshrc" ]; then
+    rm ~/.zshrc && ln -s ~/.dotfiles/user/zshrc ~/.zshrc && echo "${GREEN}Zsh configuration successfully.${NC}" || echo -e "${RED}Zsh configuration failed.${NC}"
   else
-    ln -s ~/.dotfiles/user/zshrc ~/.zshrc && echo "${GREEN}Zsh configuration copied successfully.${NC}" || echo -e "${RED}Failed to copy Zsh configuration.${NC}"
+    ln -s ~/.dotfiles/user/zshrc ~/.zshrc && echo "${GREEN}Zsh configuration successfully.${NC}" || echo -e "${RED}Zsh configuration failed.${NC}"
+  fi
+  if [ ! -d "$HOME/.local/share/backgrounds" ]; then
+    ask "$(echo "${BLUE}$(whoami),do you want to configure the backgrounds?${NC}")"
+    rm -rf ~/.local/share/backgrounds
+    ln -s ~/.dotfiles/local/backgrounds ~/.local/share/
+  fi
+  if [ ! -d "$HOME/.local/share/fonts" ]; then
+    ask "$(echo "${BLUE}$(whoami),do you want to configure the fonts?${NC}")"
+    rm -rf ~/.local/share/fonts
+    ln -s ~/.dotfiles/local/fonts ~/.local/share/
   fi
 }
 
