@@ -8,6 +8,7 @@ YELLOW='\033[0;33m'
 NC='\033[0m' # No Color
 
 ask() {
+  local prompt="$1"
   while true; do
     read -p "$1 (Y/n) " -r
     REPLY=${REPLY:-"y"}
