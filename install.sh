@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Colors for better visuals
 GREEN='\033[0;32m'
@@ -6,8 +6,6 @@ RED='\033[0;31m'
 BLUE='\033[0;34m'
 YELLOW='\033[0;33m'
 NC='\033[0m' # No Color
-
-echo -e "${BLUE}Starting system configuration...${NC}"
 
 # Define package names
 packages=(
@@ -38,12 +36,16 @@ packages=(
   zoxide
 )
 
-# Function to check if sudo is available
-check_sudo() {
-  if ! sudo -v &>/dev/null; then
-    echo -e "${RED}Error: sudo privileges are required. Please run as a user with sudo access.${NC}"
-    exit 1
-  fi
+ask() {
+  while true; do
+    read -p "$1 (Y/n) " -r
+    REPLY=${REPLY:-"y"}
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+      return 1
+    elif [[ $REPLY =~ ^[Nn]$ ]]; then
+      return 0
+    fi
+  done
 }
 
 # Function to install packages
@@ -78,26 +80,45 @@ install_neovim() {
 # Configure batcat & fd-find in Ubuntu
 configure_bat_fd() {
   echo -e "${BLUE}Configuring batcat and fd-find...${NC}"
-  mkdir -p ~/.local/bin
-  ln -sf /usr/bin/batcat ~/.local/bin/bat
-  ln -sf /usr/bin/fdfind ~/.local/bin/fd
+  if [[ ! -d "$HOME/.local/bin/bat" ]] && [[ ! -d "$HOME/.local/bin/fd" ]]; then
+    mkdir -p ~/.local/bin
+    ln -sf /usr/bin/batcat ~/.local/bin/bat
+    ln -sf /usr/bin/fdfind ~/.local/bin/fd
+  else
+    echo "${YELLOW}batcat & fd-find has been configured"
+  fi
 }
 
 # Install Zsh and Oh My Zsh
 install_zsh() {
-  if ! command -v zsh &>/dev/null; then
-    echo -e "${GREEN}Installing Zsh and Oh My Zsh...${NC}"
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" || { echo -e "${RED}Failed to install Oh My Zsh.${NC}"; }
+  if [ ! -d "$HOME/.oh-my-zsh" ]; then
+    echo -e "${GREEN}Installing Oh My Zsh...${NC}"
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" || { echo -e "${RED}Failed to install Oh My Zsh.${NC}"; }
   else
     echo -e "${YELLOW}Oh My Zsh is already installed.${NC}"
   fi
-
-  echo -e "${BLUE}Installing Zsh plugins...${NC}"
-  ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
-  git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
-  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
-  git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git $ZSH_CUSTOM/plugins/fast-syntax-highlighting
-  git clone --depth 1 -- https://github.com/marlonrichert/zsh-autocomplete.git $ZSH_CUSTOM/plugins/zsh-autocomplete
+  if [[ ! -d "$HOME/.oh-my-zsh/custom/plugins" ]]; then
+    echo -e "${BLUE}Installing Zsh plugins...${NC}"
+    git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
+    git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git $ZSH_CUSTOM/plugins/fast-syntax-highlighting
+    git clone --depth 1 -- https://github.com/marlonrichert/zsh-autocomplete.git $ZSH_CUSTOM/plugins/zsh-autocomplete
+  else
+    echo -e "${YELLOW}Zsh plugins is already installed.${NC}"
+  fi
+  if [[ ! -d "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" ]]; then
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+  else
+    echo -e "${YELLOW}powerlevel10k already installed.${NC}"
+  fi
+  shell=$(echo $SHELL)
+  if [[ $shell == "/bin/bash" ]]; then
+    # Set zsh as the default shell
+    echo -e "${BLUE}Setting zsh as the default shell...${NC}"
+    chsh -s $(which zsh) || { echo -e "${RED}Failed to set Zsh as default shell.${NC}"; }
+  else
+    echo -e "${YELLOW}Zsh is your default shell.${NC}"
+  fi
 }
 
 # Install Tpm for Tmux
@@ -112,10 +133,14 @@ install_tmux_tpm() {
 
 # Install fzf & fzf-git
 install_fzf() {
-  echo -e "${BLUE}Installing fzf and fzf-git...${NC}"
-  git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-  ~/.fzf/install
-  git clone https://github.com/junegunn/fzf-git.sh.git ~/.fzf-git.sh
+  if [ ! -d "$HOME/.fzf" ] && [ ! -d "$HOME/.fzf-git.sh" ]; then
+    echo -e "${BLUE}Installing fzf and fzf-git...${NC}"
+    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+    ~/.fzf/install
+    git clone https://github.com/junegunn/fzf-git.sh.git ~/.fzf-git.sh
+  else
+    echo -e "${YELLOW}fzf is already installed.${NC}"
+  fi
 }
 
 # Install nvm
@@ -174,35 +199,52 @@ clone_dotfiles() {
       echo -e "${RED}Failed to clone dotfiles.${NC}"
       exit 1
     }
-    cd ~/.dotfiles
-    # Copy nvim configuration
-    echo -e "${BLUE}Copying neovim configuration...${NC}"
-    cp -r ~/.dotfiles/config/nvim ~/.config/
-    # Copy lazygit configuration
-    echo -e "${BLUE}Copying lazygit configuration...${NC}"
-    cp -r ~/.dotfiles/config/lazygit ~/.config/
-    # Copy git configuration
-    echo -e "${BLUE}Copying git configuration...${NC}"
-    cp ~/.dotfiles/user/gitconfig ~/.gitconfig
-    # Copy tmux configuration
-    echo -e "${BLUE}Copying tmux configuration...${NC}"
-    cp ~/.dotfiles/user/tmux.conf ~/.tmux.conf
-    # Copy zsh configuration
-    echo -e "${BLUE}Copying zsh configuration...${NC}"
-    cp ~/.dotfiles/user/zshrc ~/.zshrc
-    # Set zsh as the default shell
-    echo -e "${BLUE}Setting zsh as the default shell...${NC}"
-    chsh -s $(which zsh) || { echo -e "${RED}Failed to set Zsh as default shell.${NC}"; }
   else
     echo -e "${YELLOW}Dotfiles are already cloned.${NC}"
   fi
 }
 
+configuration() {
+  echo -e "${BLUE}Symlink neovim configuration...${NC}"
+  if [ -e ~/.config/nvim ] || [ -L ~/.config/nvim ]; then
+    echo -e "${YELLOW}Neovim configuration already exists. Skipping...${NC}"
+  else
+    ln -s ~/.dotfiles/config/nvim ~/.config/ && echo -e "${GREEN}Neovim configuration copied successfully.${NC}" || echo -e "${RED}Failed to copy Neovim configuration.${NC}"
+  fi
+
+  echo -e "${BLUE}Symlink lazygit configuration...${NC}"
+  if [ -e ~/.config/lazygit ] || [ -L ~/.config/lazygit ]; then
+    echo -e "${YELLOW}Lazygit configuration already exists. Skipping...${NC}"
+  else
+    ln -s ~/.dotfiles/config/lazygit ~/.config/ && echo -e "${GREEN}Lazygit configuration copied successfully.${NC}" || echo -e "${RED}Failed to copy Lazygit configuration.${NC}"
+  fi
+
+  echo -e "${BLUE}Symlink git configuration...${NC}"
+  if [ -e ~/.gitconfig ] || [ -L ~/.gitconfig ]; then
+    echo -e "${YELLOW}Git configuration already exists. Skipping...${NC}"
+  else
+    ln -s ~/.dotfiles/user/gitconfig ~/.gitconfig && echo -e "${GREEN}Git configuration copied successfully.${NC}" || echo -e "${RED}Failed to copy Git configuration.${NC}"
+  fi
+
+  echo -e "${BLUE}Symlink tmux configuration...${NC}"
+  if [ -e ~/.tmux.conf ] || [ -L ~/.tmux.conf ]; then
+    echo -e "${YELLOW}Tmux configuration already exists. Skipping...${NC}"
+  else
+    ln -s ~/.dotfiles/user/tmux.conf ~/.tmux.conf && echo -e "${GREEN}Tmux configuration copied successfully.${NC}" || echo -e "${RED}Failed to copy Tmux configuration.${NC}"
+  fi
+
+  echo -e "${BLUE}Symlink zsh configuration...${NC}"
+  if [ -e ~/.zshrc ] || [ -L ~/.zshrc ]; then
+    echo -e "${YELLOW}Zsh configuration already exists. Skipping...${NC}"
+  else
+    ln -s ~/.dotfiles/user/zshrc ~/.zshrc && echo -e "${GREEN}Zsh configuration copied successfully.${NC}" || echo -e "${RED}Failed to copy Zsh configuration.${NC}"
+  fi
+}
+
 # Main installation process
-echo -e "${BLUE}Do you want to proceed with installing the necessary packages? (y/n)${NC}"
-read -r proceed
-if [[ "$proceed" == "y" ]]; then
-  check_sudo
+ask "$(echo -e "${BLUE}Do you want to proceed with installing the necessary packages?${NC}")"
+if [ $? -eq 1 ]; then
+  echo -e "${BLUE}Starting system configuration...${NC}"
   install_packages
   install_neovim
   configure_bat_fd
@@ -214,6 +256,7 @@ if [[ "$proceed" == "y" ]]; then
   install_lazygit
   install_composer
   clone_dotfiles
+  configuration
   echo -e "${GREEN}Configuration completed!${NC}"
 else
   echo -e "${RED}Installation aborted.${NC}"
