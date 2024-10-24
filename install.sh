@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 # Colors for better visuals
 GREEN='\033[0;32m'
@@ -6,19 +6,6 @@ RED='\033[0;31m'
 BLUE='\033[0;34m'
 YELLOW='\033[0;33m'
 NC='\033[0m' # No Color
-
-ask() {
-  local prompt="$1"
-  while true; do
-    read -p "$1 (Y/n) " -r
-    REPLY=${REPLY:-"y"}
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-      return 1
-    elif [[ $REPLY =~ ^[Nn]$ ]]; then
-      return 0
-    fi
-  done
-}
 
 # Define package names
 packages=(
@@ -49,6 +36,18 @@ packages=(
   zoxide
 )
 
+ask() {
+  while true; do
+    read -p "$1 (Y/n) " -r
+    REPLY=${REPLY:-"y"}
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+      return 1
+    elif [[ $REPLY =~ ^[Nn]$ ]]; then
+      return 0
+    fi
+  done
+}
+
 # Function to install packages
 install_packages() {
   echo -e "${BLUE}Updating package lists...${NC}"
@@ -59,7 +58,7 @@ install_packages() {
 
   echo -e "${BLUE}Installing required packages...${NC}"
   for package in "${packages[@]}"; do
-    if ! command -v "$package" &>/dev/null; then
+    if ! dpkg -s "$package" &>/dev/null; then
       echo -e "${GREEN}Installing $package...${NC}"
       sudo apt install -y "$package" || { echo -e "${RED}Failed to install $package.${NC}"; }
     else
@@ -70,7 +69,7 @@ install_packages() {
 
 # Install Neovim
 install_neovim() {
-  if ! command -v nvim &>/dev/null; then
+  if ! dpkg -s nvim &>/dev/null; then
     echo -e "${GREEN}Installing Neovim...${NC}"
     sudo snap install nvim --classic || { echo -e "${RED}Failed to install Neovim.${NC}"; }
   else
