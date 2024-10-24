@@ -1,7 +1,7 @@
 ## 🚀 Getting Started
 
-```bash
-curl -o- https://raw.githubusercontent.com/rijaluddina/dotfiles/master/install.sh | bash
+```sh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/rijaluddina/dotfiles/master/install.sh)"
 ```
 
 ## ✨ Done!

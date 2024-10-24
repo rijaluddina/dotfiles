@@ -242,7 +242,7 @@ configuration() {
 }
 
 # Main installation process
-ask "$(echo "${BLUE}Do you want to proceed with installing the necessary packages?${NC}")"
+ask "$(echo "${BLUE}$(whoami),Do you want to proceed with installing the necessary packages?${NC}")"
 if [ $? -eq 1 ]; then
   echo "${BLUE}Starting system configuration...${NC}"
   install_packages
