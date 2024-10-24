@@ -7,6 +7,18 @@ BLUE='\033[0;34m'
 YELLOW='\033[0;33m'
 NC='\033[0m' # No Color
 
+ask() {
+  while true; do
+    read -p "$1 (Y/n) " -r
+    REPLY=${REPLY:-"y"}
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+      return 1
+    elif [[ $REPLY =~ ^[Nn]$ ]]; then
+      return 0
+    fi
+  done
+}
+
 # Define package names
 packages=(
   bat
@@ -35,18 +47,6 @@ packages=(
   zsh
   zoxide
 )
-
-ask() {
-  while true; do
-    read -p "$1 (Y/n) " -r
-    REPLY=${REPLY:-"y"}
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-      return 1
-    elif [[ $REPLY =~ ^[Nn]$ ]]; then
-      return 0
-    fi
-  done
-}
 
 # Function to install packages
 install_packages() {
