@@ -254,17 +254,26 @@ configuration() {
     ln -s ~/.dotfiles/user/tmux.conf ~/.tmux.conf && echo "${GREEN}Tmux configuration copied successfully.${NC}" || echo -e "${RED}Tmux configuration failed.${NC}"
   fi
 
+  echo "${BLUE}Symlink workspace configuration...${NC}"
+  if [ -e ~/.workspace.sh ] || [ -L ~/.workspace.sh ]; then
+    echo "${YELLOW}Tmux configuration already exists. Skipping...${NC}"
+  else
+    ln -s ~/.dotfiles/user/workspace.sh ~/.workspace.sh && echo "${GREEN}Workspace configuration copied successfully.${NC}" || echo -e "${RED}Workspace configuration failed.${NC}"
+  fi
+
   echo "${BLUE}Symlink zsh configuration...${NC}"
-  if [ ! -d "$HOME/.zshrc" ]; then
-    rm ~/.zshrc && ln -s ~/.dotfiles/user/zshrc ~/.zshrc && echo "${GREEN}Zsh configuration successfully.${NC}" || echo -e "${RED}Zsh configuration failed.${NC}"
+  if [ -e ~/.tmux.conf ] || [ -L ~/.tmux.conf ] || [ ! -d "$HOME/.zshrc" ]; then
+    rm ~/.zshrc && ln -s ~/.dotfiles/user/zshrc ~/.zshrc && echo "${GREEN}Zsh reconfiguration successfully.${NC}" || echo -e "${RED}Zsh configuration failed.${NC}"
   else
     ln -s ~/.dotfiles/user/zshrc ~/.zshrc && echo "${GREEN}Zsh configuration successfully.${NC}" || echo -e "${RED}Zsh configuration failed.${NC}"
   fi
+
   if [ ! -d "$HOME/.local/share/backgrounds" ]; then
     ask "$(echo "${BLUE}$(whoami),do you want to configure the backgrounds?${NC}")"
     rm -rf ~/.local/share/backgrounds
     ln -s ~/.dotfiles/local/backgrounds ~/.local/share/
   fi
+
   if [ ! -d "$HOME/.local/share/fonts" ]; then
     ask "$(echo "${BLUE}$(whoami),do you want to configure the fonts?${NC}")"
     rm -rf ~/.local/share/fonts
