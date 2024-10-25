@@ -230,42 +230,42 @@ configuration() {
   if [ -e ~/.config/nvim ] || [ -L ~/.config/nvim ]; then
     echo "${YELLOW}Neovim configuration already exists. Skipping...${NC}"
   else
-    ln -s ~/.dotfiles/config/nvim ~/.config/ && echo "${GREEN}Neovim configuration copied successfully.${NC}" || echo -e "${RED}Neovim configuration failed.${NC}"
+    ln -s ~/.dotfiles/config/nvim ~/.config/ && echo "${GREEN}Neovim configuration successfully.${NC}" || echo "${RED}Neovim configuration failed.${NC}"
   fi
 
   echo "${BLUE}Symlink lazygit configuration...${NC}"
   if [ -e ~/.config/lazygit ] || [ -L ~/.config/lazygit ]; then
     echo "${YELLOW}Lazygit configuration already exists. Skipping...${NC}"
   else
-    ln -s ~/.dotfiles/config/lazygit ~/.config/ && echo "${GREEN}Lazygit configuration copied successfully.${NC}" || echo -e "${RED}Lazygit configuration failed.${NC}"
+    ln -s ~/.dotfiles/config/lazygit ~/.config/ && echo "${GREEN}Lazygit configuration successfully.${NC}" || echo "${RED}Lazygit configuration failed.${NC}"
   fi
 
   echo "${BLUE}Symlink git configuration...${NC}"
   if [ -e ~/.gitconfig ] || [ -L ~/.gitconfig ]; then
     echo "${YELLOW}Git configuration already exists. Skipping...${NC}"
   else
-    ln -s ~/.dotfiles/user/gitconfig ~/.gitconfig && echo "${GREEN}Git configuration copied successfully.${NC}" || echo -e "${RED}Git configuration failed.${NC}"
+    ln -s ~/.dotfiles/user/gitconfig ~/.gitconfig && echo "${GREEN}Git configuration successfully.${NC}" || echo "${RED}Git configuration failed.${NC}"
   fi
 
   echo "${BLUE}Symlink tmux configuration...${NC}"
   if [ -e ~/.tmux.conf ] || [ -L ~/.tmux.conf ]; then
     echo "${YELLOW}Tmux configuration already exists. Skipping...${NC}"
   else
-    ln -s ~/.dotfiles/user/tmux.conf ~/.tmux.conf && echo "${GREEN}Tmux configuration copied successfully.${NC}" || echo -e "${RED}Tmux configuration failed.${NC}"
+    ln -s ~/.dotfiles/user/tmux.conf ~/.tmux.conf && echo "${GREEN}Tmux configuration successfully.${NC}" || echo "${RED}Tmux configuration failed.${NC}"
   fi
 
   echo "${BLUE}Symlink workspace configuration...${NC}"
   if [ -e ~/.workspace.sh ] || [ -L ~/.workspace.sh ]; then
     echo "${YELLOW}Tmux configuration already exists. Skipping...${NC}"
   else
-    ln -s ~/.dotfiles/user/workspace.sh ~/.workspace.sh && echo "${GREEN}Workspace configuration copied successfully.${NC}" || echo -e "${RED}Workspace configuration failed.${NC}"
+    ln -s ~/.dotfiles/user/workspace.sh ~/.workspace.sh && echo "${GREEN}Workspace configuration successfully.${NC}" || echo "${RED}Workspace configuration failed.${NC}"
   fi
 
   echo "${BLUE}Symlink zsh configuration...${NC}"
-  if [ -e ~/.tmux.conf ] || [ -L ~/.tmux.conf ] || [ ! -d "$HOME/.zshrc" ]; then
-    rm ~/.zshrc && ln -s ~/.dotfiles/user/zshrc ~/.zshrc && echo "${GREEN}Zsh reconfiguration successfully.${NC}" || echo -e "${RED}Zsh configuration failed.${NC}"
+  if [ -e ~/.zshrc ] || [ -L ~/.zshrc ]; then
+    rm ~/.zshrc && ln -s ~/.dotfiles/user/zshrc ~/.zshrc && echo "${GREEN}Zsh reconfiguration successfully.${NC}" || echo "${RED}Zsh reconfiguration failed.${NC}"
   else
-    ln -s ~/.dotfiles/user/zshrc ~/.zshrc && echo "${GREEN}Zsh configuration successfully.${NC}" || echo -e "${RED}Zsh configuration failed.${NC}"
+    ln -s ~/.dotfiles/user/zshrc ~/.zshrc && echo "${GREEN}Zsh configuration successfully.${NC}" || echo "${RED}Zsh configuration failed.${NC}"
   fi
 
   if [ ! -d "$HOME/.local/share/backgrounds" ]; then
@@ -285,17 +285,17 @@ configuration() {
 ask "$(echo "${BLUE}$(whoami),Do you want to proceed with installing the necessary packages?${NC}")"
 if [ $? -eq 1 ]; then
   echo "${BLUE}Starting system configuration...${NC}"
-  install_packages
-  install_neovim
-  configure_bat_fd
-  install_zsh
-  install_tmux_tpm
-  install_fzf
-  install_nvm
-  install_whitesur_theme
-  install_lazygit
-  install_composer
-  clone_dotfiles
+  # install_packages
+  # install_neovim
+  # configure_bat_fd
+  # install_zsh
+  # install_tmux_tpm
+  # install_fzf
+  # install_nvm
+  # install_whitesur_theme
+  # install_lazygit
+  # install_composer
+  # clone_dotfiles
   configuration
   echo "${GREEN}Configuration completed!${NC}"
 else
