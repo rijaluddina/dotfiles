@@ -39,7 +39,7 @@ source $ZSH/oh-my-zsh.sh
 # Defines shortcuts for commonly used commands.
 alias a="php artisan"    # Shortcut for Laravel Artisan commands.
 alias g="lazygit"        # Shortcut for LazyGit.
-alias n="npm"            # Shortcut for npm (Node.js package manager).
+alias n="pnpm"            # Shortcut for pnpm (Node.js package manager).
 alias c="composer"       # Shortcut for Composer (PHP dependency manager).
 alias L="laravel"        # Shortcut for Laravel commands.
 alias cd="z"             # Shortcut for z command to navigate directories.

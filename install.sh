@@ -285,17 +285,17 @@ configuration() {
 ask "$(echo "${BLUE}$(whoami),Do you want to proceed with installing the necessary packages?${NC}")"
 if [ $? -eq 1 ]; then
   echo "${BLUE}Starting system configuration...${NC}"
-  # install_packages
-  # install_neovim
-  # configure_bat_fd
-  # install_zsh
-  # install_tmux_tpm
-  # install_fzf
-  # install_nvm
-  # install_whitesur_theme
-  # install_lazygit
-  # install_composer
-  # clone_dotfiles
+  install_packages
+  install_neovim
+  configure_bat_fd
+  install_zsh
+  install_tmux_tpm
+  install_fzf
+  install_nvm
+  install_whitesur_theme
+  install_lazygit
+  install_composer
+  clone_dotfiles
   configuration
   echo "${GREEN}Configuration completed!${NC}"
 else
