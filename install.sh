@@ -21,8 +21,10 @@ packages="
   luarocks
   make
   php
+  composer
   php-sqlite3
   php-xml
+  php-mbstring
   php-intl
   php-cli
   php-curl
@@ -168,7 +170,7 @@ install_fzf() {
 install_nvm() {
   if ! command -v nvm >/dev/null 2>&1; then
     echo "${GREEN}Installing nvm...${NC}"
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash || { echo "${RED}Failed to install nvm.${NC}"; }
+    PROFILE=/dev/null bash -c 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash' || { echo "${RED}Failed to install nvm.${NC}"; }
   else
     echo "${YELLOW}nvm is already installed.${NC}"
   fi
@@ -195,20 +197,6 @@ install_lazygit() {
     rm -f lazygit.tar.gz
   else
     echo "${YELLOW}lazygit is already installed.${NC}"
-  fi
-}
-
-# Install composer
-install_composer() {
-  if ! command -v composer >/dev/null 2>&1; then
-    echo "${GREEN}Installing Composer...${NC}"
-    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-    php -r "if (hash_file('sha384', 'composer-setup.php') === 'dac665fdc30fdd8ec78b38b9800061b4150413ff2e3b6f88543c636f7cd84f6db9189d43a81e5503cda447da73c7e5b6') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
-    php composer-setup.php
-    php -r "unlink('composer-setup.php');"
-    sudo mv composer.phar /usr/local/bin/composer || { echo "${RED}Failed to move Composer.${NC}"; }
-  else
-    echo "${YELLOW}Composer is already installed.${NC}"
   fi
 }
 
@@ -285,18 +273,17 @@ configuration() {
 ask "$(echo "${BLUE}$(whoami),Do you want to proceed with installing the necessary packages?${NC}")"
 if [ $? -eq 1 ]; then
   echo "${BLUE}Starting system configuration...${NC}"
-  install_packages
-  install_neovim
-  configure_bat_fd
-  install_zsh
-  install_tmux_tpm
-  install_fzf
+  # install_packages
+  # install_neovim
+  # configure_bat_fd
+  # install_zsh
+  # install_tmux_tpm
+  # install_fzf
   install_nvm
-  install_whitesur_theme
-  install_lazygit
-  install_composer
-  clone_dotfiles
-  configuration
+  # install_whitesur_theme
+  # install_lazygit
+  # clone_dotfiles
+  # configuration
   echo "${GREEN}Configuration completed!${NC}"
 else
   echo "${RED}Installation aborted.${NC}"
