@@ -244,7 +244,7 @@ configuration() {
 
   echo "${BLUE}Symlink workspace configuration...${NC}"
   if [ -e ~/.workspace.sh ] || [ -L ~/.workspace.sh ]; then
-    echo "${YELLOW}Tmux configuration already exists. Skipping...${NC}"
+    echo "${YELLOW}Workspace configuration already exists. Skipping...${NC}"
   else
     ln -s ~/.dotfiles/user/workspace.sh ~/.workspace.sh && echo "${GREEN}Workspace configuration successfully.${NC}" || echo "${RED}Workspace configuration failed.${NC}"
   fi

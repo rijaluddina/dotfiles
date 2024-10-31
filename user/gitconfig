@@ -6,11 +6,11 @@
 
 [delta]
     navigate = true    # use n and N to move between diff sections
-    side-by-side = true
+    side-by-side = false
 
 
     # delta detects terminal colors automatically; set one of these to disable auto-detection
-    # dark = true
+    dark = true
     # light = true
 
 [merge]
@@ -18,15 +18,28 @@
 
 [diff]
     colorMoved = default
+
+[color]
+    ui = true
+
 [credential "https://github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
+	  helper = 
+	  helper = !/usr/bin/gh auth git-credential
+
 [credential "https://gist.github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
+	  helper = 
+	  helper = !/usr/bin/gh auth git-credential
+
+[github]
+    user = rijaluddina
+
 [user]
-	email = rijaluddin.alazmi@outlook.com
-	name = rijaluddina
-	signingkey = rijaluddin.alazmi@outlook.com
+	  email = rijaluddin.alazmi@outlook.com
+	  name = rijaluddina
+	  signingkey = rijaluddin.alazmi@outlook.com
+
 [commit]
-	gpgsign = true
+    gpgsign = true
+
+[init]
+    defaultBranch = main
