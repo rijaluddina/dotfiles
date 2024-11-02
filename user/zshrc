@@ -24,6 +24,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Plugins
 # Lists the plugins to be used with Oh My Zsh.
 plugins=(
+  poetry                  # Poetry plugins for zsh completions
   git                     # Git plugin for git command enhancements.
   nvm                     # nvm plugin source nvm
   zsh-autosuggestions     # Provides suggestions based on command history.

@@ -20,6 +20,8 @@ packages="
   gnome-tweaks
   luarocks
   make
+  python3-pip
+  pipx
   php
   composer
   php-sqlite3
@@ -71,7 +73,7 @@ install_packages() {
 
 # Install Neovim
 install_neovim() {
-  if ! dpkg -s nvim >/dev/null 2>&1; then
+  if ! snap find nvim >/dev/null 2>&1; then
     echo "${GREEN}Installing Neovim...${NC}"
     sudo snap install nvim --classic || { echo "${RED}Failed to install Neovim.${NC}"; }
   else
@@ -247,6 +249,19 @@ configuration() {
     echo "${YELLOW}Workspace configuration already exists. Skipping...${NC}"
   else
     ln -s ~/.dotfiles/user/workspace.sh ~/.workspace.sh && echo "${GREEN}Workspace configuration successfully.${NC}" || echo "${RED}Workspace configuration failed.${NC}"
+  fi
+
+  echo "${BLUE}Installing poetry...${NC}"
+  if ! command -v poetry >/dev/null 2>&1 && dpkg -s pipx >/dev/null 2>&1; then
+    pipx install poetry && echo "${GREEN}Poetry installation successful.${NC}" || echo "${RED}Poetry installation failed.${NC}"
+    if ! [ -d "$HOME/.oh-my-zsh/plugins/poetry" ] && command -v poetry >/dev/null 2>&1; then
+      mkdir -p $HOME/.oh-my-zsh/plugins/poetry
+      poetry completions zsh >$HOME/.oh-my-zsh/plugins/poetry/_poetry
+    else
+      echo "${YELLOW}Poetry configuration already exists. Skipping...${NC}"
+    fi
+  else
+    echo "${YELLOW}Poetry already installed and configured.${NC}"
   fi
 
   echo "${BLUE}Symlink zsh configuration...${NC}"
