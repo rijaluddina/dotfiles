@@ -207,8 +207,11 @@ clone_dotfiles() {
   if [ ! -d "$HOME/.dotfiles" ]; then
     echo "${BLUE}Cloning your dotfiles...${NC}"
     git clone --recursive https://github.com/rijaluddina/dotfiles.git ~/.dotfiles || {
-      echo "${RED}Failed to clone dotfiles.${NC}"
-      exit 1
+      echo "${YELLOW}Failed to clone using HTTPS, trying SSH...${NC}"
+      git clone --recursive git@github.com:rijaluddina/dotfiles.git ~/.dotfiles || {
+        echo "${RED}Failed to clone dotfiles using SSH as well.${NC}"
+        exit 1
+      }
     }
   else
     echo "${YELLOW}Dotfiles are already cloned.${NC}"
