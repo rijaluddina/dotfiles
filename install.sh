@@ -203,7 +203,7 @@ install_lazygit() {
 
 # Clone your dotfiles
 clone_dotfiles() {
-  if [ -d "$HOME/.dotfiles" ]; then
+  if [ ! -d "$HOME/.dotfiles" ]; then
     echo "${BLUE}Cloning your dotfiles...${NC}"
     git clone --recursive https://github.com/rijaluddina/dotfiles.git ~/.dotfiles || {
       echo "${RED}Failed to clone dotfiles.${NC}"
@@ -271,26 +271,26 @@ configuration() {
 
   echo "${BLUE}Symlink fonts configuration...${NC}"
   if [ ! -d "$HOME/.local/share/fonts" ]; then
-    ln -s ~/.dotfiles/local/fonts ~/.local/share/
+    ln -s ~/.dotfiles/local/fonts ~/.local/share/ && echo "${GREEN}Fonts configuration successfully.${NC}" || echo "${RED}Fonts configuration failed.${NC}"
   else
     rm -rf ~/.local/share/fonts
-    ls -s ~/.dotfiles/local/fonts ~/.local/share/
+    ln -s ~/.dotfiles/local/fonts ~/.local/share/ && echo "${GREEN}Fonts configuration successfully.${NC}" || echo "${RED}Fonts configuration failed.${NC}"
   fi
 
   ask "$(echo "${BLUE}$(whoami),do you want to configure the backgrounds?${NC}")"
   if [ ! -d "$HOME/.local/share/backgrounds" ]; then
-    ln -s ~/.dotfiles/local/backgrounds ~/.local/share/
+    ln -s ~/.dotfiles/local/backgrounds ~/.local/share/ && echo "${GREEN}Backgrounds configuration successfully.${NC}" || echo "${RED}Backgrounds configuration failed.${NC}"
   else
     rm -rf ~/.local/share/backgrounds
-    ls -s ~/.dotfiles/local/backgrounds ~/.local/share/
+    ln -s ~/.dotfiles/local/backgrounds ~/.local/share/ && echo "${GREEN}Backgrounds configuration successfully.${NC}" || echo "${RED}Backgrounds configuration failed.${NC}"
   fi
 
   ask "$(echo "${BLUE}$(whoami),do you want to configure the icons?${NC}")"
   if [ ! -d "$HOME/.icons" ]; then
-    ln -s ~/.dotfiles/local/icons ~/.icons
+    ln -s ~/.dotfiles/local/icons ~/.icons && echo "${GREEN}Icons configuration successfully.${NC}" || echo "${RED}Icons configuration failed.${NC}"
   else
     rm -rf ~/.icons
-    ls -s ~/.dotfiles/local/icons ~/.icons
+    ln -s ~/.dotfiles/local/icons ~/.icons && echo "${GREEN}Icons configuration successfully.${NC}" || echo "${RED}Icons configuration failed.${NC}"
   fi
 }
 
@@ -298,7 +298,7 @@ configuration() {
 ask "$(echo "${BLUE}$(whoami),Do you want to proceed with installing the necessary packages?${NC}")"
 if [ $? -eq 1 ]; then
   echo "${BLUE}Starting system configuration...${NC}"
-  install_packages
+  # install_packages
   install_neovim
   configure_bat_fd
   install_zsh
