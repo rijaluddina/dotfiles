@@ -284,6 +284,14 @@ configuration() {
     rm -rf ~/.local/share/backgrounds
     ls -s ~/.dotfiles/local/backgrounds ~/.local/share/
   fi
+
+  ask "$(echo "${BLUE}$(whoami),do you want to configure the icons?${NC}")"
+  if [ ! -d "$HOME/.icons" ]; then
+    ln -s ~/.dotfiles/local/icons ~/.icons
+  else
+    rm -rf ~/.icons
+    ls -s ~/.dotfiles/local/icons ~/.icons
+  fi
 }
 
 # Main installation process
