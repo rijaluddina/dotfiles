@@ -73,7 +73,7 @@ install_packages() {
 
 # Install Neovim
 install_neovim() {
-  if ! snap find nvim >/dev/null 2>&1; then
+  if ! command -V nvim >/dev/null 2>&1; then
     echo "${GREEN}Installing Neovim...${NC}"
     sudo snap install nvim --classic || { echo "${RED}Failed to install Neovim.${NC}"; }
   else
@@ -97,8 +97,7 @@ configure_bat_fd() {
 install_zsh() {
   if [ ! -d "$HOME/.oh-my-zsh" ]; then
     echo "${GREEN}Installing Oh My Zsh...${NC}"
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" || { echo "${RED}Failed to install Oh My Zsh.${NC}"; }
-    exit 1
+    git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git ~/.oh-my-zsh || { echo "${RED}Failed to install Oh My Zsh.${NC}"; }
   else
     echo "${YELLOW}Oh My Zsh is already installed.${NC}"
   fi
@@ -109,17 +108,17 @@ install_zsh() {
     echo "${BLUE}Installing Zsh plugins...${NC}"
 
     # Cloning zsh-autosuggestions
-    if ! git clone https://github.com/zsh-users/zsh-autosuggestions.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"; then
+    if ! git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"; then
       echo "${RED}Failed to clone zsh-autosuggestions.${NC}"
     fi
 
     # Cloning zsh-syntax-highlighting
-    if ! git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"; then
+    if ! git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"; then
       echo "${RED}Failed to clone zsh-syntax-highlighting.${NC}"
     fi
 
     # Cloning fast-syntax-highlighting
-    if ! git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting"; then
+    if ! git clone --depth 1 https://github.com/zdharma-continuum/fast-syntax-highlighting.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting"; then
       echo "${RED}Failed to clone fast-syntax-highlighting.${NC}"
     fi
 
@@ -150,7 +149,7 @@ install_zsh() {
 install_tmux_tpm() {
   echo "${BLUE}Installing TPM for Tmux...${NC}"
   if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
-    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    git clone --depth https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
   else
     echo "${YELLOW}TPM is already installed.${NC}"
   fi
@@ -162,7 +161,7 @@ install_fzf() {
     echo "${BLUE}Installing fzf and fzf-git...${NC}"
     git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
     ~/.fzf/install
-    git clone https://github.com/junegunn/fzf-git.sh.git ~/.fzf-git.sh
+    git clone --depth 1 https://github.com/junegunn/fzf-git.sh.git ~/.fzf-git.sh
   else
     echo "${YELLOW}fzf is already installed.${NC}"
   fi
@@ -170,7 +169,7 @@ install_fzf() {
 
 # Install nvm
 install_nvm() {
-  if ! command -v nvm >/dev/null 2>&1; then
+  if [ ! -d "$HOME/.nvm" ]; then
     echo "${GREEN}Installing nvm...${NC}"
     PROFILE=/dev/null bash -c 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash' || { echo "${RED}Failed to install nvm.${NC}"; }
   else
@@ -204,14 +203,10 @@ install_lazygit() {
 
 # Clone your dotfiles
 clone_dotfiles() {
-  if [ ! -d "$HOME/.dotfiles" ]; then
+  if [ -d "$HOME/.dotfiles" ]; then
     echo "${BLUE}Cloning your dotfiles...${NC}"
     git clone --recursive https://github.com/rijaluddina/dotfiles.git ~/.dotfiles || {
-      echo "${YELLOW}Failed to clone using HTTPS, trying SSH...${NC}"
-      git clone --recursive git@github.com:rijaluddina/dotfiles.git ~/.dotfiles || {
-        echo "${RED}Failed to clone dotfiles using SSH as well.${NC}"
-        exit 1
-      }
+      echo "${RED}Failed to clone dotfiles.${NC}"
     }
   else
     echo "${YELLOW}Dotfiles are already cloned.${NC}"
@@ -274,16 +269,20 @@ configuration() {
     ln -s ~/.dotfiles/user/zshrc ~/.zshrc && echo "${GREEN}Zsh configuration successfully.${NC}" || echo "${RED}Zsh configuration failed.${NC}"
   fi
 
-  if [ ! -d "$HOME/.local/share/backgrounds" ]; then
-    ask "$(echo "${BLUE}$(whoami),do you want to configure the backgrounds?${NC}")"
-    rm -rf ~/.local/share/backgrounds
-    ln -s ~/.dotfiles/local/backgrounds ~/.local/share/
+  echo "${BLUE}Symlink fonts configuration...${NC}"
+  if [ ! -d "$HOME/.local/share/fonts" ]; then
+    ln -s ~/.dotfiles/local/fonts ~/.local/share/
+  else
+    rm -rf ~/.local/share/fonts
+    ls -s ~/.dotfiles/local/fonts ~/.local/share/
   fi
 
-  if [ ! -d "$HOME/.local/share/fonts" ]; then
-    ask "$(echo "${BLUE}$(whoami),do you want to configure the fonts?${NC}")"
-    rm -rf ~/.local/share/fonts
-    ln -s ~/.dotfiles/local/fonts ~/.local/share/
+  ask "$(echo "${BLUE}$(whoami),do you want to configure the backgrounds?${NC}")"
+  if [ ! -d "$HOME/.local/share/backgrounds" ]; then
+    ln -s ~/.dotfiles/local/backgrounds ~/.local/share/
+  else
+    rm -rf ~/.local/share/backgrounds
+    ls -s ~/.dotfiles/local/backgrounds ~/.local/share/
   fi
 }
 
