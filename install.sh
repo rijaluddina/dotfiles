@@ -37,6 +37,8 @@ packages="
   tmux
   xsel
   zsh
+  zsh-autosuggestions
+  zsh-syntax-highlighting
   zoxide
 "
 
