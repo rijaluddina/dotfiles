@@ -151,7 +151,7 @@ install_zsh() {
 install_tmux_tpm() {
   echo "${BLUE}Installing TPM for Tmux...${NC}"
   if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
-    git clone --depth https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    git clone --depth 1 https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
   else
     echo "${YELLOW}TPM is already installed.${NC}"
   fi
@@ -300,17 +300,17 @@ configuration() {
 ask "$(echo "${BLUE}$(whoami),Do you want to proceed with installing the necessary packages?${NC}")"
 if [ $? -eq 1 ]; then
   echo "${BLUE}Starting system configuration...${NC}"
-  install_packages
-  install_neovim
-  configure_bat_fd
-  install_zsh
+  # install_packages
+  # install_neovim
+  # configure_bat_fd
+  # install_zsh
   install_tmux_tpm
-  install_fzf
-  install_nvm
-  install_whitesur_theme
-  install_lazygit
-  clone_dotfiles
-  configuration
+  # install_fzf
+  # install_nvm
+  # install_whitesur_theme
+  # install_lazygit
+  # clone_dotfiles
+  # configuration
   echo "${GREEN}Configuration completed!${NC}"
 else
   echo "${RED}Installation aborted.${NC}"
