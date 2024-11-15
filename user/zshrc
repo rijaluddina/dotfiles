@@ -53,7 +53,7 @@ alias cd="z"             # Shortcut for z command to navigate directories.
 alias t="tmux"           # Shortcut for tmux (terminal multiplexer).
 alias v="nvim"           # Shortcut for Neovim text editor.
 alias ls="eza --icons=always"  # Shortcut for eza (better ls) with icons.
-alias chat="(cd ~/.dotfiles/user/cli-bot && poetry run project)"
+alias chat="(~/.dotfiles/user/cli-bot && poetry run project)"
 
 # Powerlevel10k Configuration
 # Loads the Powerlevel10k configuration if it exists.
