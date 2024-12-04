@@ -24,7 +24,6 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Plugins
 # Lists the plugins to be used with Oh My Zsh.
 plugins=(
-  poetry                  # Poetry plugins for zsh completions
   git                     # Git plugin for git command enhancements.
   nvm                     # nvm plugin source nvm
   zsh-autosuggestions     # Provides suggestions based on command history.
@@ -42,7 +41,6 @@ source $ZSH/oh-my-zsh.sh
 
 # Aliases
 # Defines shortcuts for commonly used commands.
-alias po="poetry"        # Shortcut for poetry
 alias py="python3"       # Shortcut for python3
 alias a="php artisan"    # Shortcut for Laravel Artisan commands.
 alias g="lazygit"        # Shortcut for LazyGit.
@@ -53,7 +51,6 @@ alias cd="z"             # Shortcut for z command to navigate directories.
 alias t="tmux"           # Shortcut for tmux (terminal multiplexer).
 alias v="nvim"           # Shortcut for Neovim text editor.
 alias ls="eza --icons=always"  # Shortcut for eza (better ls) with icons.
-alias chat="(~/.dotfiles/user/cli-bot && poetry run project)"
 
 # Powerlevel10k Configuration
 # Loads the Powerlevel10k configuration if it exists.

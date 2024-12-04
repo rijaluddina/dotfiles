@@ -19,6 +19,7 @@ packages="
   gnome-shell-extension-manager
   gnome-tweaks
   luarocks
+  libssl-dev
   make
   python3-pip
   pipx
@@ -249,19 +250,6 @@ configuration() {
     echo "${YELLOW}Workspace configuration already exists. Skipping...${NC}"
   else
     ln -s ~/.dotfiles/user/workspace.sh ~/.workspace.sh && echo "${GREEN}Workspace configuration successfully.${NC}" || echo "${RED}Workspace configuration failed.${NC}"
-  fi
-
-  echo "${BLUE}Installing poetry...${NC}"
-  if ! command -v poetry >/dev/null 2>&1 && dpkg -s pipx >/dev/null 2>&1; then
-    pipx install poetry && echo "${GREEN}Poetry installation successful.${NC}" || echo "${RED}Poetry installation failed.${NC}"
-    if ! [ -d "$HOME/.oh-my-zsh/plugins/poetry" ] && command -v poetry >/dev/null 2>&1; then
-      mkdir -p $HOME/.oh-my-zsh/plugins/poetry
-      poetry completions zsh >$HOME/.oh-my-zsh/plugins/poetry/_poetry
-    else
-      echo "${YELLOW}Poetry configuration already exists. Skipping...${NC}"
-    fi
-  else
-    echo "${YELLOW}Poetry already installed and configured.${NC}"
   fi
 
   echo "${BLUE}Symlink zsh configuration...${NC}"
