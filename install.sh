@@ -252,6 +252,13 @@ configuration() {
     ln -s ~/.dotfiles/user/workspace.sh ~/.workspace.sh && echo "${GREEN}Workspace configuration successfully.${NC}" || echo "${RED}Workspace configuration failed.${NC}"
   fi
 
+  echo "${BLUE}Installing uv...${NC}"
+  if ! command -v uv >/dev/null 2>&1 && dpkg -s pipx >/dev/null 2>&1; then
+    pipx install uv && echo "${GREEN}Uv installation successful.${NC}" || echo "${RED}Uv installation failed.${NC}"
+  else
+    echo "${YELLOW}Uv is already installed.${NC}"
+  fi
+
   echo "${BLUE}Symlink zsh configuration...${NC}"
   if [ -e ~/.zshrc ] || [ -L ~/.zshrc ]; then
     rm ~/.zshrc && ln -s ~/.dotfiles/user/zshrc ~/.zshrc && echo "${GREEN}Zsh reconfiguration successfully.${NC}" || echo "${RED}Zsh reconfiguration failed.${NC}"
