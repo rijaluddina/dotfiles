@@ -17,6 +17,8 @@ export PATH="$HOME/.local/bin:$PATH"
 # Ensures GPG prompts for passphrases work correctly in the terminal.
 export GPG_TTY=$(tty)
 
+export GROQ_NVIM_API_KEY=
+
 # Oh My Zsh Theme
 # Sets the theme for Oh My Zsh to Powerlevel10k.
 ZSH_THEME="powerlevel10k/powerlevel10k"
@@ -130,3 +132,8 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+# Uv & Uvx shell autocompletion
+eval "$(uv generate-shell-completion zsh)"
+eval "$(uvx --generate-shell-completion zsh)"
+
