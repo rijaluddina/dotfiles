@@ -17,7 +17,8 @@ export PATH="$HOME/.local/bin:$PATH"
 # Ensures GPG prompts for passphrases work correctly in the terminal.
 export GPG_TTY=$(tty)
 
-export GROQ_NVIM_API_KEY=
+export GEMINI_API_KEY=
+export GROQ_API_KEY=
 
 # Oh My Zsh Theme
 # Sets the theme for Oh My Zsh to Powerlevel10k.
