@@ -10,6 +10,7 @@ NC='\033[0m' # No Color
 # Define package names
 packages="
   bat
+  curl
   eza
   fd-find
   gcc
