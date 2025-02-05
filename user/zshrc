@@ -146,3 +146,8 @@ esac
 eval "$(uv generate-shell-completion zsh)"
 eval "$(uvx --generate-shell-completion zsh)"
 
+# Deno shell autocomletion
+# configuration
+# mkdir ~/.oh-my-zsh/custom/plugins/deno
+# deno completions zsh > ~/.oh-my-zsh/custom/plugins/deno/_deno
+source ~/.oh-my-zsh/plugins/deno/deno.plugin.zsh
