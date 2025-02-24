@@ -19,6 +19,7 @@ export GPG_TTY=$(tty)
 
 export GEMINI_API_KEY=
 export GROQ_API_KEY=
+export TAVILY_API_KEY=
 
 # Oh My Zsh Theme
 # Sets the theme for Oh My Zsh to Powerlevel10k.
@@ -61,7 +62,7 @@ alias cd="z"             # Shortcut for z command to navigate directories.
 alias t="tmux"           # Shortcut for tmux (terminal multiplexer).
 alias v="nvim"           # Shortcut for Neovim text editor.
 alias ls="eza --icons=always"  # Shortcut for eza (better ls) with icons.
-alias ai="(cd ~/Documents/project/bot/bot && uv run -s main.py)"
+alias ai="(cd ~/Documents/project/bot/src && uv run -s main.py)"
 
 # Powerlevel10k Configuration
 # Loads the Powerlevel10k configuration if it exists.
@@ -151,3 +152,11 @@ eval "$(uvx --generate-shell-completion zsh)"
 # mkdir ~/.oh-my-zsh/custom/plugins/deno
 # deno completions zsh > ~/.oh-my-zsh/custom/plugins/deno/_deno
 source ~/.oh-my-zsh/plugins/deno/deno.plugin.zsh
+
+# bun
+export BUN_INSTALL="$HOME/.local/share/reflex/bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# bun
+export BUN_INSTALL="$HOME/.local/share/reflex/bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
