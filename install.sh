@@ -253,13 +253,6 @@ configuration() {
     ln -s ~/.dotfiles/user/tmux.conf ~/.tmux.conf && echo "${GREEN}Tmux configuration successfully.${NC}" || echo "${RED}Tmux configuration failed.${NC}"
   fi
 
-  echo "${BLUE}Symlink workspace configuration...${NC}"
-  if [ -e ~/.workspace.sh ] || [ -L ~/.workspace.sh ]; then
-    echo "${YELLOW}Workspace configuration already exists. Skipping...${NC}"
-  else
-    ln -s ~/.dotfiles/user/workspace.sh ~/.workspace.sh && echo "${GREEN}Workspace configuration successfully.${NC}" || echo "${RED}Workspace configuration failed.${NC}"
-  fi
-
   echo "${BLUE}Installing uv...${NC}"
   if ! command -v uv >/dev/null 2>&1 && dpkg -s pipx >/dev/null 2>&1; then
     pipx install uv && echo "${GREEN}Uv installation successful.${NC}" || echo "${RED}Uv installation failed.${NC}"
@@ -310,9 +303,9 @@ if [ $? -eq 1 ]; then
   install_tmux_tpm
   install_fzf
   install_nvm
-  install_whitesur_theme
   install_lazygit
   clone_dotfiles
+  install_whitesur_theme
   configuration
   echo "${GREEN}Configuration completed!${NC}"
 else
