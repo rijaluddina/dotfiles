@@ -186,6 +186,13 @@ install_whitesur_theme() {
   echo "${BLUE}Installing WhiteSur-gtk-theme...${NC}"
   if [ ! -d "$HOME/.WhiteSur" ]; then
     git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git --depth=1 ~/.WhiteSur
+    cd ~/.WhiteSur
+    ./install.sh -a all -t blue -N glassy -l --shell -normal --round
+    ./tweaks.sh -f flat
+    rm -rf $HOME/snap/firefox/common/.mozilla/firefox/firefox-themes
+    cp -rf $HOME/.dotfiles/local/firefox-themes $HOME/snap/firefox/common/.mozilla/firefox/firefox-themes
+    gsettings set org.gnome.shell.extensions.dash-to-dock click-action "minimize-or-previews"
+    rm -rf ~/.WhiteSur || { echo "${RED}Failed to install WhiteSur theme.${NC}"; }
   else
     echo "${YELLOW}WhiteSur theme is already installed.${NC}"
   fi
@@ -199,7 +206,7 @@ install_lazygit() {
     curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
     tar xf lazygit.tar.gz lazygit
     sudo install lazygit /usr/local/bin || { echo "${RED}Failed to install lazygit.${NC}"; }
-    rm -f lazygit.tar.gz
+    rm lazygit.tar.gz lazygit
   else
     echo "${YELLOW}lazygit is already installed.${NC}"
   fi

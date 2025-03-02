@@ -152,11 +152,3 @@ eval "$(uvx --generate-shell-completion zsh)"
 # mkdir ~/.oh-my-zsh/custom/plugins/deno
 # deno completions zsh > ~/.oh-my-zsh/custom/plugins/deno/_deno
 source ~/.oh-my-zsh/plugins/deno/deno.plugin.zsh
-
-# bun
-export BUN_INSTALL="$HOME/.local/share/reflex/bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
-# bun
-export BUN_INSTALL="$HOME/.local/share/reflex/bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
