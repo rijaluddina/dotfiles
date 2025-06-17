@@ -254,8 +254,8 @@ configuration() {
   fi
 
   echo "${BLUE}Installing uv...${NC}"
-  if ! command -v uv >/dev/null 2>&1 && dpkg -s pipx >/dev/null 2>&1; then
-    pipx install uv && echo "${GREEN}Uv installation successful.${NC}" || echo "${RED}Uv installation failed.${NC}"
+  if ! command -v uv >/dev/null 2>&1; then
+    curl -LsSf https://astral.sh/uv/install.sh | sh && echo "${GREEN}Uv installation successful.${NC}" || echo "${RED}Uv installation failed.${NC}"
   else
     echo "${YELLOW}Uv is already installed.${NC}"
   fi

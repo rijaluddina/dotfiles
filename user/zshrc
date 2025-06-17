@@ -17,9 +17,9 @@ export PATH="$HOME/.local/bin:$PATH"
 # Ensures GPG prompts for passphrases work correctly in the terminal.
 export GPG_TTY=$(tty)
 
-export GEMINI_API_KEY=
-export GROQ_API_KEY=
-export TAVILY_API_KEY=
+export GEMINI_API_KEY=AIzaSyAYlRYiwQuVRRmu45ToZCcOsrh9CBn808Y
+export GROQ_API_KEY=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
+export TAVILY_API_KEY=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
 
 # Oh My Zsh Theme
 # Sets the theme for Oh My Zsh to Powerlevel10k.
@@ -152,3 +152,8 @@ eval "$(uvx --generate-shell-completion zsh)"
 # mkdir ~/.oh-my-zsh/custom/plugins/deno
 # deno completions zsh > ~/.oh-my-zsh/custom/plugins/deno/_deno
 source ~/.oh-my-zsh/plugins/deno/deno.plugin.zsh
+
+# Cursor alias
+function cursor() {
+    /home/rijaluddina/.local/bin/cursor.appimage --no-sandbox "${@}" > /dev/null 2>&1 & disown
+}
